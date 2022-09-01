@@ -13,6 +13,19 @@ var q = 0;
 var img = new Image();
 img.src = "png/Enemy.png";
 
+fetch('getQue.php').then(function(response) {
+    return response.json();
+})
+.then(function(data){
+    console.log(data.qID);
+});
+fetch('getRes.php').then(function(response) {
+    return response.json();
+})
+.then(function(data){
+    console.log(data.qID);
+});
+
 let questions = [
 {
     "Quest": "What color is the sky",
@@ -77,7 +90,6 @@ const dum = new BattleEnemy(img, 5, 0);
 
 
 function init() {
-    console.log("hej");
     canvas = document.getElementById("canvas");
     context = canvas.getContext("2d");
 
@@ -156,7 +168,6 @@ function gameloop() {
     draw();
     checkmouse();
     update();
-    console.log(mouse_x +" , "+mouse_y);
     requestAnimationFrame(gameloop);
 }
 
