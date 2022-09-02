@@ -10,27 +10,26 @@ $cor2 = $_POST["correct2"];
 $cor3 = $_POST["correct3"];
 $cor4 = $_POST["correct4"];
 
-echo $_POST["correct2"];
 
-if ($cor1 == "on"){
-  $cor1 = true;
+if ($cor1){
+  $cor1 = 1;
 } else{
-  $cor1 = false;
+  $cor1 = 0;
 }
-if ($cor2 == "on"){
-  $cor2 = true;
+if ($cor2){
+  $cor2 = 1;
 } else{
-  $cor2 = false;
+  $cor2 = 0;
 }
-if ($cor3 == "on"){
-  $cor3 = true;
+if ($cor3){
+  $cor3 = 1;
 } else{
-  $cor3 = false;
+  $cor3 = 0;
 }
-if ($cor4 == "on"){
-  $cor4 = true;
+if ($cor4){
+  $cor4 = 1;
 } else{
-  $cor4 = false;
+  $cor4 = 0;
 }
 
 
