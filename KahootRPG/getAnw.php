@@ -6,6 +6,7 @@ $password = "";
 $dbname = "kahootrpg";
 $data = [];
 
+
 function connCheck($conne, $sqll) {
   if ($conne->query($sqll) === TRUE) {
     echo "New record created successfully";
@@ -22,19 +23,15 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT * FROM questions";
+$sql = "SELECT * FROM answers";
 
 $result = $conn->query($sql);
 
-
 if ($result->num_rows > 0) {
-  while($row = mysqli_fetch_assoc($result)){
-    $data[] = $row;
+    while($row = mysqli_fetch_assoc($result)){
+      $data[] = $row;
 }}
-
-
 
 header('Content-Type: application/json');
 
 echo json_encode($data);
-?>

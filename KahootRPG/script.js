@@ -10,6 +10,9 @@ var opt_4 = false;
 
 var q = 0;
 
+let questions = [];
+let anwsers = [];
+
 var img = new Image();
 img.src = "png/Enemy.png";
 
@@ -17,16 +20,26 @@ fetch('getQue.php').then(function(response) {
     return response.json();
 })
 .then(function(data){
-    console.log(data.qID);
+    console.log(data);
+    questions = data;
+    for (let i = 0; i < questions.length; i++){
+        console.log(questions);
+    }
 });
-fetch('getRes.php').then(function(response) {
+
+fetch('getAnw.php').then(function(response) {
     return response.json();
 })
 .then(function(data){
-    console.log(data.qID);
+    anwsers = data;
+    for (let i = 0; i < anwsers.length; i++){
+        console.log(anwsers);
+    }
 });
 
-let questions = [
+
+
+let questions_old = [
 {
     "Quest": "What color is the sky",
     "an1": "Blue",
@@ -90,13 +103,14 @@ const dum = new BattleEnemy(img, 5, 0);
 
 
 function init() {
+
     canvas = document.getElementById("canvas");
     context = canvas.getContext("2d");
 
-    document.getElementById("1").innerHTML = questions[q].an1;
-    document.getElementById("2").innerHTML = questions[q].an2;
-    document.getElementById("3").innerHTML = questions[q].an3;
-    document.getElementById("4").innerHTML = questions[q].an4;
+    //document.getElementById("1").innerHTML = questions[q].an1;
+    //document.getElementById("2").innerHTML = questions[q].an2;
+    //document.getElementById("3").innerHTML = questions[q].an3;
+    //document.getElementById("4").innerHTML = questions[q].an4;
 
     gameloop();
 }
@@ -165,9 +179,9 @@ function draw(){
 }
 
 function gameloop() {
-    draw();
-    checkmouse();
-    update();
+    //draw();
+    //checkmouse();
+    //update();
     requestAnimationFrame(gameloop);
 }
 
