@@ -15,7 +15,7 @@ session_start();
     <title>Login</title>
 </head>
 <body>
-    <form action="login_submit.php" method="post">
+    <form action="frage_submit.php" method="post">
         <input name = "quest" value = "quest here"/> </br>
         <input name = "anwser1" value = "Option 1"/> <input type="checkbox" name = "correct1" value="true"/> <input type="hidden" name = "correct1" value="false"/> </br>
         <input name = "anwser2" value = "Option 2"/> <input type="checkbox" name = "correct2" value="true"/> <input type="hidden" name = "correct2" value="false"/> </br>

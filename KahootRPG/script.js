@@ -1,7 +1,6 @@
 var x = 0;
-var mouse_x = 0;
-var mouse_y = 0;
-var mouse_pressed = false;
+
+var questChoosen = false;
 
 var opt_1 = false;
 var opt_2 = false;
@@ -12,25 +11,11 @@ var q = 0;
 
 let questions = [];
 let anwsers = [];
+let poAnwsers = [];
 
 var img = new Image();
 img.src = "png/Enemy.png";
 
-fetch('getQue.php').then(function(response) {
-    return response.json();
-})
-.then(function(data){
-    questions = data;
-    console.log(questions);
-});
-
-fetch('getAnw.php').then(function(response) {
-    return response.json();
-})
-.then(function(data){
-    anwsers = data;
-    console.log(anwsers);
-});
 
 
 
@@ -96,19 +81,70 @@ let BattleEnemy = class {
 
 const dum = new BattleEnemy(img, 5, 0);
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
 
 function init() {
+    var Q_Done = false;
+    var A_Done = false;
+    
+    fetch('getQue.php').then(function(response) {
+        return response.json();
+    })
+    .then(function(data){
+        questions = data;
+        Q_Done = true;
+        console.log(1);
+        fetch('getAnw.php').then(function(response) {
 
-    canvas = document.getElementById("canvas");
-    context = canvas.getContext("2d");
+            return response.json();
+        })
+        .then(function(data){
+            anwsers = data;
+            console.log(anwsers);
+            A_Done = true;
+            canvas = document.getElementById("canvas");
+            context = canvas.getContext("2d");
+            q = Math.floor(Math.random() * questions.length);
+            console.log(anwsers);
+            for(let i = 0; i < anwsers.length; i++){
+                        
+            console.log("Hej");
+            if(anwsers[i].qID == questions[q].qID){
+                console.log("då");
+                poAnwsers.push(anwsers[i]);
+            };
+            };
+                
+            shuffleArray(poAnwsers);
+            console.log(poAnwsers);
+            
+                    
+                
+            document.getElementById("1").innerHTML = poAnwsers[0].Answer;
+            document.getElementById("2").innerHTML = poAnwsers[1].Answer;
+            document.getElementById("3").innerHTML = poAnwsers[2].Answer;
+            document.getElementById("4").innerHTML = poAnwsers[3].Answer;
+                
+            gameloop();
+        });
+    })
 
-    document.getElementById("1").innerHTML = questions_old[q].an1;
-    document.getElementById("2").innerHTML = questions_old[q].an2;
-    document.getElementById("3").innerHTML = questions_old[q].an3;
-    document.getElementById("4").innerHTML = questions_old[q].an4;
+    
 
-    gameloop();
-}
+
+
+    };    
+
+    
+    
+        
+    
+
 
 function anwser(test) {
     if(test.id == 1){
@@ -126,41 +162,44 @@ function anwser(test) {
 }
 
 function update() {
-    if(opt_1 == true ){
-        if(questions_old[q].correct == "an1"){
-            dum.loseHP();
-            opt_1 = false;
-        } else{
-            opt_1 = false;
+    if(!questChoosen){
+        q = Math.floor(Math.random() * questions.length);
+        console.log(q);
+        questChoosen = true;
+    } else {
+        if(opt_1 == true ){
+            if(questions_old[q].correct == "an1"){
+                dum.loseHP();
+                opt_1 = false;
+            } else{
+                opt_1 = false;
+            }
+        }
+        if(opt_2 == true){
+            if(questions_old[q].correct == "an2"){
+                dum.loseHP();
+                opt_2 = false;
+            } else{
+                opt_2 = false;
+            }
+        }
+        if(opt_3 == true){
+            if(questions_old[q].correct == "an3"){
+                dum.loseHP();
+                opt_3 = false;
+            } else{
+                opt_3 = false;
+            }
+        }
+        if(opt_4 == true){
+            if(questions_old[q].correct == "an4"){
+                dum.loseHP();
+                opt_4 = false;
+            } else{
+                opt_4 = false;
+            }
         }
     }
-    if(opt_2 == true){
-        if(questions_old[q].correct == "an2"){
-            dum.loseHP();
-            opt_2 = false;
-        } else{
-            opt_2 = false;
-        }
-    }
-    if(opt_3 == true){
-        if(questions_old[q].correct == "an3"){
-            dum.loseHP();
-            opt_3 = false;
-        } else{
-            opt_3 = false;
-        }
-    }
-    if(opt_4 == true){
-        if(questions_old[q].correct == "an4"){
-            dum.loseHP();
-            opt_4 = false;
-        } else{
-            opt_4 = false;
-        }
-    }
-}
-
-function checkmouse(){
 
 }
 
@@ -168,7 +207,7 @@ function draw(){
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.font = "30px Arial";
     dum.draw();
-    context.fillText(questions_old[q].Quest, 10, 50); 
+    context.fillText(questions[q].Question, 10, 50); 
     context.fillText(dum.hp, 0, 400);
     
 }
@@ -177,8 +216,10 @@ function gameloop() {
     draw();
     //checkmouse();
     update();
+    
     requestAnimationFrame(gameloop);
 }
+
 
 
 window.onload = init();
