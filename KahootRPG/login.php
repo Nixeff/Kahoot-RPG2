@@ -1,3 +1,17 @@
+<?php 
+session_start();
+$user = "";
+$pass = "";
+
+if(isset($_SESSION['uname'])){
+    $user = $_SESSION['uname'];
+}
+if(isset($_SESSION['pass'])){
+    $pass = $_SESSION['pass'];
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,8 +22,8 @@
 </head>
 <body>
     <form action="login_check.php" method="post">
-        <input name="uname" placeholder="Username" autofocus/> </br>
-        <input name="pass" placeholder="Password" type="password" autofocus/> </br>
+        <input name="uname" placeholder="Username" value=<?php echo $user ?> autofocus/> </br>
+        <input name="pass" placeholder="Password" type="password" value=<?php echo $pass ?>/> </br>
         <input type="submit" value="Log in" />
     </form>
 </body>
