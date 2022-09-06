@@ -97,7 +97,6 @@ function init() {
     })
     .then(function(data){
         questions = data;
-        Q_Done = true;
         console.log(1);
         fetch('getAnw.php').then(function(response) {
 
@@ -106,7 +105,6 @@ function init() {
         .then(function(data){
             anwsers = data;
             console.log(anwsers);
-            A_Done = true;
             canvas = document.getElementById("canvas");
             context = canvas.getContext("2d");
             q = Math.floor(Math.random() * questions.length);

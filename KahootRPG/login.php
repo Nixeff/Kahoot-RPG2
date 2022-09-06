@@ -7,8 +7,9 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="inlog_check.php" method="post">
-        <input name="uname" placeholder="username" autofocus/> </br>
+    <form action="login_check.php" method="post">
+        <input name="uname" placeholder="Username" autofocus/> </br>
+        <input name="pass" placeholder="Password" type="password" autofocus/> </br>
         <input type="submit" value="Log in" />
     </form>
 </body>
