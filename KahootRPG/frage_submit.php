@@ -5,37 +5,26 @@ $test1 = $_POST["anwser1"];
 $test2 = $_POST["anwser2"];
 $test3 = $_POST["anwser3"];
 $test4 = $_POST["anwser4"];
-$cor1 = $_POST["correct1"];
-$cor2 = $_POST["correct2"];
-$cor3 = $_POST["correct3"];
-$cor4 = $_POST["correct4"];
-
-
-if ($cor1){
+if(isset($_POST["correct1"])){
   $cor1 = 1;
 } else{
   $cor1 = 0;
 }
-if ($cor2){
+if(isset($_POST["correct2"])){
   $cor2 = 1;
 } else{
   $cor2 = 0;
 }
-if ($cor3){
+if(isset($_POST["correct3"])){
   $cor3 = 1;
 } else{
   $cor3 = 0;
 }
-if ($cor4){
+if(isset($_POST["correct4"])){
   $cor4 = 1;
 } else{
   $cor4 = 0;
 }
-
-
-
-echo $cor1;
-
 
 $servername = "localhost";
 $username = "root";

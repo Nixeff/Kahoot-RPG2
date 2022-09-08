@@ -3,6 +3,7 @@ session_start();
 $user = "";
 $pass = "";
 
+//Ska användas för att sätta tillbaka det man skrivit i sinna platser
 if(isset($_SESSION['uname'])){
     $user = $_SESSION['uname'];
 }

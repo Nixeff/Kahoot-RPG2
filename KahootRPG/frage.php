@@ -60,24 +60,24 @@ if ($result->num_rows > 0) {
 <body>
     <div id="main">
         <form action="frage_submit.php" method="post">
-            <input name = "quest" value = "quest here"/> </br>
-            <input name = "anwser1" value = "Option 1"/> <input type="checkbox" name = "correct1" value="true"/> <input type="hidden" name = "correct1" value="false"/> </br>
-            <input name = "anwser2" value = "Option 2"/> <input type="checkbox" name = "correct2" value="true"/> <input type="hidden" name = "correct2" value="false"/> </br>
-            <input name = "anwser3" value = "Option 3"/> <input type="checkbox" name = "correct3" value="true"/> <input type="hidden" name = "correct3" value="false"/> </br>
-            <input name = "anwser4" value = "Option 4"/> <input type="checkbox" name = "correct4" value="true"/> <input type="hidden" name = "correct4" value="false"/> </br>
+            <input name = "quest" placeholder = "Question"/> </br>
+            <input name = "anwser1" placeholder = "Option 1"/> <input type="checkbox" name = "correct1"/>  </br>
+            <input name = "anwser2" placeholder = "Option 2"/> <input type="checkbox" name = "correct2"/>  </br>
+            <input name = "anwser3" placeholder = "Option 3"/> <input type="checkbox" name = "correct3"/>  </br>
+            <input name = "anwser4" placeholder = "Option 4"/> <input type="checkbox" name = "correct4"/>  </br>
 
             <input type="submit" value="Submit"/>
         </form>
-        <div>
+        <div id="container">
             <?php 
             for($i = 0; $i < count($questions); $i++){
-                echo '<h1>'.$questions[$i]["Question"].'</h1></br>';
+                echo '<form action="remove.php" method="POST"><h1>'.$questions[$i]["Question"].'</h1></br>';
                 for($x = 0; $x < count($anwsers); $x++){
                     if($questions[$i]["qID"] == $anwsers[$x]["qID"]){
-                        echo $anwsers[$x]["Answer"].'</br>';
+                        echo '<li>'.$anwsers[$x]["Answer"].'</li></br>';
                     }
                 }
-                echo '<input type="submit" value="Delete"/>';
+                echo '<input type="hidden" name="RqID" value="'.$questions[$i]["qID"].'"/><input type="submit" value="Delete"/></form>';
             }
             
             

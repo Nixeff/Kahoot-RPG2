@@ -4,3 +4,11 @@
 #main{
     display:flex;
 }
+#container{
+    background-color: beige;
+    padding: 10px;
+    margin-left: 100px;
+}
+.anwserbutton{
+    padding:0;
+}

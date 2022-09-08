@@ -33,6 +33,7 @@ if ($result->num_rows > 0) {
       $data[] = $row;
 }}
 
+//Sickar iväg svaren
 header('Content-Type: application/json');
 
 echo json_encode($data);

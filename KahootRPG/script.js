@@ -2,6 +2,7 @@ var x = 0;
 
 var questChoosen = false;
 
+// Används för att se villget allternativ som blev valt
 var opt_1 = false;
 var opt_2 = false;
 var opt_3 = false;
@@ -9,9 +10,9 @@ var opt_4 = false;
 
 var q = 0;
 
-let questions = [];
-let anwsers = [];
-let poAnwsers = [];
+let questions = [];     // Där vi sparar ner frågorna
+let anwsers = [];       // Där vi sparar ner potentiella svar
+let poAnwsers = [];     // Används för att slumpa ut vart svaren ska vara
 
 var img = new Image();
 img.src = "png/Enemy.png";
@@ -54,75 +55,83 @@ let questions_old = [
 }
 ]
 
+// Motståndare
 let BattleEnemy = class {
     constructor(img, hp, questDif){
         this.img = img;
         this.hp = hp;
         this.questDif = questDif;
     }
-
+    //Måla motståndaren
     draw(){
         context.drawImage(this.img,20,100);
     }
-
+    //Motståndare förlorar liv och den byter fråga 
     loseHP(){
         this.hp -= 1;
         if(this.hp <= 0){
             alert("W");
         }
-        q = Math.floor(Math.random() * 3);
-        document.getElementById("1").innerHTML = questions_old[q].an1;
-        document.getElementById("2").innerHTML = questions_old[q].an2;
-        document.getElementById("3").innerHTML = questions_old[q].an3;
-        document.getElementById("4").innerHTML = questions_old[q].an4;
+        poAnwsers = [];
+        q = Math.floor(Math.random() * questions.length);   //Slumpar en fråga
+        for(let i = 0; i < anwsers.length; i++){
+            if(anwsers[i].qID == questions[q].qID){
+                console.log("då");
+                poAnwsers.push(anwsers[i]);
+            };
+        };
+            
+        shuffleArray(poAnwsers);
+        console.log(poAnwsers);
+        
+                
+        //Sätter svaren på knapparna
+        document.getElementById("1").innerHTML = poAnwsers[0].Answer;
+        document.getElementById("2").innerHTML = poAnwsers[1].Answer;
+        document.getElementById("3").innerHTML = poAnwsers[2].Answer;
+        document.getElementById("4").innerHTML = poAnwsers[3].Answer;
     }
 }
 
 
 const dum = new BattleEnemy(img, 5, 0);
 
+//Blandar listan credit: ashleedawg Stackoverflow
 function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+    for (let i = array.length-1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
 
+// Startar helaprogrammet
 function init() {
-    var Q_Done = false;
-    var A_Done = false;
-    
+    //Fångar in frågorna
     fetch('getQue.php').then(function(response) {
         return response.json();
     })
     .then(function(data){
-        questions = data;
-        console.log(1);
-        fetch('getAnw.php').then(function(response) {
-
+        questions = data;       
+        fetch('getAnw.php').then(function(response) {   //Fångar in svaren till frågorna
             return response.json();
         })
         .then(function(data){
-            anwsers = data;
-            console.log(anwsers);
+            anwsers = data;     
             canvas = document.getElementById("canvas");
             context = canvas.getContext("2d");
-            q = Math.floor(Math.random() * questions.length);
-            console.log(anwsers);
+            q = Math.floor(Math.random() * questions.length);   //Slumpar en fråga
             for(let i = 0; i < anwsers.length; i++){
-                        
-            console.log("Hej");
-            if(anwsers[i].qID == questions[q].qID){
-                console.log("då");
-                poAnwsers.push(anwsers[i]);
-            };
+                if(anwsers[i].qID == questions[q].qID){
+                    console.log("då");
+                    poAnwsers.push(anwsers[i]);
+                };
             };
                 
             shuffleArray(poAnwsers);
             console.log(poAnwsers);
             
                     
-                
+            //Sätter svaren på knapparna
             document.getElementById("1").innerHTML = poAnwsers[0].Answer;
             document.getElementById("2").innerHTML = poAnwsers[1].Answer;
             document.getElementById("3").innerHTML = poAnwsers[2].Answer;
@@ -131,19 +140,9 @@ function init() {
             gameloop();
         });
     })
+};    
 
-    
-
-
-
-    };    
-
-    
-    
-        
-    
-
-
+//Kollar vilken knapp som blev trycket
 function anwser(test) {
     if(test.id == 1){
         opt_1 = true;
@@ -159,14 +158,16 @@ function anwser(test) {
     } 
 }
 
+//Uppdaterar olika saker
 function update() {
+    //Om det inte finns en fråga vald tar den en slump fråga
     if(!questChoosen){
         q = Math.floor(Math.random() * questions.length);
-        console.log(q);
         questChoosen = true;
     } else {
+        //Kollar om någon knapp blev trycked och ifall det är rätt eller inte
         if(opt_1 == true ){
-            if(questions_old[q].correct == "an1"){
+            if(poAnwsers[0].Correct == 1){
                 dum.loseHP();
                 opt_1 = false;
             } else{
@@ -174,7 +175,7 @@ function update() {
             }
         }
         if(opt_2 == true){
-            if(questions_old[q].correct == "an2"){
+            if(poAnwsers[1].Correct == 1){
                 dum.loseHP();
                 opt_2 = false;
             } else{
@@ -182,7 +183,7 @@ function update() {
             }
         }
         if(opt_3 == true){
-            if(questions_old[q].correct == "an3"){
+            if(poAnwsers[2].Correct == 1){
                 dum.loseHP();
                 opt_3 = false;
             } else{
@@ -190,7 +191,7 @@ function update() {
             }
         }
         if(opt_4 == true){
-            if(questions_old[q].correct == "an4"){
+            if(poAnwsers[3].Correct == 1){
                 dum.loseHP();
                 opt_4 = false;
             } else{
@@ -201,6 +202,7 @@ function update() {
 
 }
 
+// Mållar saker
 function draw(){
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.font = "30px Arial";
@@ -210,6 +212,7 @@ function draw(){
     
 }
 
+// Loop
 function gameloop() {
     draw();
     //checkmouse();
