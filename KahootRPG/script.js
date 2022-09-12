@@ -22,6 +22,10 @@ enemy1.push(enemy1F1);
 var enemy1F2 = new Image();
 enemy1F2.src = "png/Monster/Monster1-2.png";
 enemy1.push(enemy1F2);
+var enemy1Hurt = new Image();
+enemy1Hurt.src = "png/Monster/Monster1-Hurt.png"
+enemy1.push(enemy1Hurt);
+
 
 
 var plate = new Image();
@@ -68,6 +72,8 @@ let BattleEnemy = class {
     //Motståndare förlorar liv och den byter fråga 
     loseHP(){
         this.hp -= 1;
+        this.frame = 2;
+        this.frameCount = 0;
         if(this.hp <= 0){
             alert("W");
         }
