@@ -9,13 +9,21 @@
 
 <link rel="stylesheet" href="css.css">
 <body>
-    <canvas id="canvas" width="1000" height="500"></canvas>
-    <button class="awnserbutton" id="1" type="button" onclick="anwser(this);">1</button>
-    <button class="awnserbutton" id="2" type="button" onclick="anwser(this);">2</button>
-    <button class="awnserbutton" id="3" type="button" onclick="anwser(this);">3</button>
-    <button class="awnserbutton" id="4" type="button" onclick="anwser(this);">4</button>
-    
-    
-</body>
+    <div id="main">
+        <div>
+            <canvas id="canvas" width="1000"  height="300"></canvas>
+            <div id="anwserarea">
+                <button class="anwserbutton" id="1" type="button" onclick="anwser(this);">1</button>
+                <button class="anwserbutton" id="2" type="button" onclick="anwser(this);">2</button></br>
+                <button class="anwserbutton" id="3" type="button" onclick="anwser(this);">3</button>
+                <button class="anwserbutton" id="4" type="button" onclick="anwser(this);">4</button>
+            </div>
+        </div>
+        <div id="menu">
+            <button onclick="document.location='login.php'">Log in</button>
+
+        </div>
+    </div>
+</body >
 <script src="script.js"></script>
 </html>

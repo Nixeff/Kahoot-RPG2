@@ -79,10 +79,17 @@ connCheck($conn, $sql);
 
 $sql = "INSERT INTO answers (Answer, qID, Correct) VALUES ('$test4','$qID',$cor4)";
 
-connCheck($conn, $sql);
-
+//Har allt gått bra så går den tillbaka
+if ($conn->query($sql) === TRUE) {
+  echo "New record created successfully";
+  header('Location: '.'frage.php');
+  die();
+} else {
+  echo "Error: " . $sql . "<br>" . $conn->error;
+}
 
 $conn->close();
+
 
 
 ?>

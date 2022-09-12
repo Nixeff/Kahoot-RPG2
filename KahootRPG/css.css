@@ -1,14 +1,49 @@
 #canvas{
-    border: 2px, solid, black;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: black;
 }
 #main{
     display:flex;
+}
+#menu{
+    border-style: solid;
+    border-radius: 5px;
+    border-color: black;
+    margin-left: 15px;
+    width:300px;
+    background-color: pink;
 }
 #container{
     background-color: beige;
     padding: 10px;
     margin-left: 100px;
 }
+#anwserarea{
+    background-color: pink;
+    border-radius: 5px;
+    border-style: groove;
+    border-color: purple;
+    padding: 10px;
+    width: 980px;
+    height: 300px;
+}
 .anwserbutton{
-    padding:0;
+    background-color:palevioletred;
+    border-style: groove;
+    border-radius: 5px;
+    border-color: purple;
+    margin: 15px;
+    width: 450px;
+    height: 100px;
+    font-size: large;
+}
+.anwserbutton:hover{
+    border-color: white;
+    color: white;
+}
+.anwserbutton:active{
+    border-color: white;
+    color: white;
+    opacity: 0.6;
 }

@@ -14,57 +14,56 @@ let questions = [];     // Där vi sparar ner frågorna
 let anwsers = [];       // Där vi sparar ner potentiella svar
 let poAnwsers = [];     // Används för att slumpa ut vart svaren ska vara
 
-var img = new Image();
-img.src = "png/Enemy.png";
+var enemy1 = [];
+
+var enemy1F1 = new Image();
+enemy1F1.src = "png/Monster/Monster1-1.png";
+enemy1.push(enemy1F1);
+var enemy1F2 = new Image();
+enemy1F2.src = "png/Monster/Monster1-2.png";
+enemy1.push(enemy1F2);
 
 
-
-
-let questions_old = [
-{
-    "Quest": "What color is the sky",
-    "an1": "Blue",
-    "an2": "Green",
-    "an3": "Yellow",
-    "an4": "Red",
-    "correct": "an3"
-},
-{
-    "Quest": "What is Love?",
-    "an1": "bby Don't Hurt Me",
-    "an2": "42",
-    "an3": "Ur Mom",
-    "an4": "Me",
-    "correct": "an2"
-},
-{
-    "Quest": "Knock Knock",
-    "an1": "Who's there?",
-    "an2": "Ur Mom",
-    "an3": "Ur Mom who?",
-    "an4": "Joke",
-    "correct": "an1"
-},
-{
-    "Quest": "Execute order...",
-    "an1": "66",
-    "an2": "77",
-    "an3": "96",
-    "an4": "55",
-    "correct": "an1"
-}
-]
+var plate = new Image();
+plate.src = "png/Plate.png";
+var bg = new Image();
+bg.src = "png/Background.png";
+var think = new Image();
+think.src = "png/Think.png";
+var playerImg = new Image();
+playerImg.src = "png/Wizard.png";
 
 // Motståndare
+// obj img ImageClass
+// var hp int
+//  
 let BattleEnemy = class {
     constructor(img, hp, questDif){
         this.img = img;
         this.hp = hp;
+        this.maxHp = hp;
         this.questDif = questDif;
+        this.frameCount = 0;
+        this.frame = 0;
     }
-    //Måla motståndaren
+    //Måla motståndaren och UI
     draw(){
-        context.drawImage(this.img,20,100);
+        context.drawImage(bg,0,0);
+        this.frameCount++;
+        if (this.frameCount >= 20){
+            this.frame++;
+            this.frameCount = 0;
+            if (this.frame >= 2){
+                this.frame = 0;
+            }
+        }
+        context.drawImage(this.img[this.frame],0,0);
+        context.drawImage(playerImg,0,0);
+
+        context.drawImage(think,0,0);
+        wrapText(questions[q].Question, 440, 60, 400,40); 
+        context.fillText(this.hp+" / "+this.maxHp, 100, 100);
+        
     }
     //Motståndare förlorar liv och den byter fråga 
     loseHP(){
@@ -94,7 +93,29 @@ let BattleEnemy = class {
 }
 
 
-const dum = new BattleEnemy(img, 5, 0);
+const dum = new BattleEnemy(enemy1, 5, 0);
+
+function wrapText(text, x, y, maxWidth, lineHeight) {
+    var words = text.split(' ');
+    var line = '';
+
+    for(var n = 0; n < words.length; n++) {
+      var testLine = line + words[n] + ' ';
+      var metrics = context.measureText(testLine);
+      var testWidth = metrics.width;
+      if (testWidth > maxWidth && n > 0) {
+        context.fillText(line, x, y);
+        line = words[n] + ' ';
+        y += lineHeight;
+      }
+      else {
+        line = testLine;
+      }
+    }
+    context.fillText(line, x, y);
+}
+
+
 
 //Blandar listan credit: ashleedawg Stackoverflow
 function shuffleArray(array) {
@@ -207,8 +228,7 @@ function draw(){
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.font = "30px Arial";
     dum.draw();
-    context.fillText(questions[q].Question, 10, 50); 
-    context.fillText(dum.hp, 0, 400);
+
     
 }
 

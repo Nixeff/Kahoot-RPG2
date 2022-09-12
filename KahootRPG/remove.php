@@ -20,7 +20,10 @@ $sql = "DELETE FROM questions WHERE qID = '$RqID'";
 
 $result = $conn->query($sql);
 
-
+if(isset($result)){
+    header('Location: '.'frage.php');
+  die();
+}
 
 
 ?>

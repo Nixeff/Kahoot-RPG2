@@ -85,6 +85,9 @@ if ($result->num_rows > 0) {
 
 
         </div>
+        <div>
+            <button onclick="document.location='index.html'">Log out</button>
+        </div>
     </div>
 </body>
 </html>
