@@ -6,6 +6,18 @@
 #main{
     display:flex;
 }
+li{
+    margin-left:25px;
+}
+#questionList{
+    background-color:palevioletred;
+    border-style: groove;
+    border-radius: 5px;
+    border-color: purple;
+    margin: 15px;
+    width: 450px;
+    font-size: large;
+}
 #menu{
     border-style: solid;
     border-radius: 5px;
@@ -15,7 +27,6 @@
     background-color: pink;
 }
 #container{
-    background-color: beige;
     padding: 10px;
     margin-left: 100px;
 }

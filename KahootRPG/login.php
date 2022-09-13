@@ -1,15 +1,5 @@
 <?php 
 session_start();
-$user = "";
-$pass = "";
-
-//Ska användas för att sätta tillbaka det man skrivit i sinna platser
-if(isset($_SESSION['uname'])){
-    $user = $_SESSION['uname'];
-}
-if(isset($_SESSION['pass'])){
-    $pass = $_SESSION['pass'];
-}
 
 ?>
 
@@ -22,9 +12,16 @@ if(isset($_SESSION['pass'])){
     <title>Document</title>
 </head>
 <body>
-    <form action="login_check.php" method="post">
-        <input name="uname" placeholder="Username" value=<?php echo $user ?> autofocus/> </br>
-        <input name="pass" placeholder="Password" type="password" value=<?php echo $pass ?>/> </br>
+    <form action="login_check_teacher.php" method="post">
+        <p>Login as GameMaster</p>
+        <input name="uname" placeholder="Username" autofocus/> </br>
+        <input name="pass" placeholder="Password" type="password"/> </br>
+        <input type="submit" value="Log in" />
+    </form>
+    <form action="login_check_player.php" method="post">
+        <p>Login as Player</p>
+        <input name="uname" placeholder="Username" autofocus/> </br>
+        <input name="pass" placeholder="Password" type="password"/> </br>
         <input type="submit" value="Log in" />
     </form>
 </body>

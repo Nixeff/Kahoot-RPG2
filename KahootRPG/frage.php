@@ -71,7 +71,7 @@ if ($result->num_rows > 0) {
         <div id="container">
             <?php 
             for($i = 0; $i < count($questions); $i++){
-                echo '<form action="remove.php" method="POST"><h1>'.$questions[$i]["Question"].'</h1></br>';
+                echo '<form id="questionList" action="remove.php" method="POST"><h1>'.$questions[$i]["Question"].'</h1></br>';
                 for($x = 0; $x < count($anwsers); $x++){
                     if($questions[$i]["qID"] == $anwsers[$x]["qID"]){
                         echo '<li>'.$anwsers[$x]["Answer"].'</li></br>';
@@ -86,7 +86,7 @@ if ($result->num_rows > 0) {
 
         </div>
         <div>
-            <button onclick="document.location='index.html'">Log out</button>
+            <button onclick="document.location='index.php'">Log out</button>
         </div>
     </div>
 </body>

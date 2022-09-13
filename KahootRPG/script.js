@@ -1,7 +1,3 @@
-var x = 0;
-
-var questChoosen = false;
-
 // Används för att se villget allternativ som blev valt
 var opt_1 = false;
 var opt_2 = false;
@@ -9,6 +5,8 @@ var opt_3 = false;
 var opt_4 = false;
 
 var q = 0;
+
+var inCombat = true;
 
 let questions = [];     // Där vi sparar ner frågorna
 let anwsers = [];       // Där vi sparar ner potentiella svar
@@ -26,8 +24,6 @@ var enemy1Hurt = new Image();
 enemy1Hurt.src = "png/Monster/Monster1-Hurt.png"
 enemy1.push(enemy1Hurt);
 
-
-
 var plate = new Image();
 plate.src = "png/Plate.png";
 var bg = new Image();
@@ -42,17 +38,15 @@ playerImg.src = "png/Wizard.png";
 // var hp int
 //  
 let BattleEnemy = class {
-    constructor(img, hp, questDif){
+    constructor(img, hp){
         this.img = img;
         this.hp = hp;
         this.maxHp = hp;
-        this.questDif = questDif;
         this.frameCount = 0;
         this.frame = 0;
     }
     //Måla motståndaren och UI
     draw(){
-        context.drawImage(bg,0,0);
         this.frameCount++;
         if (this.frameCount >= 20){
             this.frame++;
@@ -75,21 +69,18 @@ let BattleEnemy = class {
         this.frame = 2;
         this.frameCount = 0;
         if(this.hp <= 0){
-            alert("W");
+            inCombat = false;
         }
         poAnwsers = [];
         q = Math.floor(Math.random() * questions.length);   //Slumpar en fråga
         for(let i = 0; i < anwsers.length; i++){
             if(anwsers[i].qID == questions[q].qID){
-                console.log("då");
                 poAnwsers.push(anwsers[i]);
             };
         };
             
         shuffleArray(poAnwsers);
-        console.log(poAnwsers);
         
-                
         //Sätter svaren på knapparna
         document.getElementById("1").innerHTML = poAnwsers[0].Answer;
         document.getElementById("2").innerHTML = poAnwsers[1].Answer;
@@ -149,13 +140,11 @@ function init() {
             q = Math.floor(Math.random() * questions.length);   //Slumpar en fråga
             for(let i = 0; i < anwsers.length; i++){
                 if(anwsers[i].qID == questions[q].qID){
-                    console.log("då");
                     poAnwsers.push(anwsers[i]);
                 };
             };
                 
             shuffleArray(poAnwsers);
-            console.log(poAnwsers);
             
                     
             //Sätter svaren på knapparna
@@ -187,11 +176,7 @@ function anwser(test) {
 
 //Uppdaterar olika saker
 function update() {
-    //Om det inte finns en fråga vald tar den en slump fråga
-    if(!questChoosen){
-        q = Math.floor(Math.random() * questions.length);
-        questChoosen = true;
-    } else {
+    if(inCombat){
         //Kollar om någon knapp blev trycked och ifall det är rätt eller inte
         if(opt_1 == true ){
             if(poAnwsers[0].Correct == 1){
@@ -226,14 +211,17 @@ function update() {
             }
         }
     }
-
 }
 
 // Mållar saker
 function draw(){
     context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(bg,0,0);
     context.font = "30px Arial";
-    dum.draw();
+    if(inCombat){
+        dum.draw();
+    }
+    
 
     
 }
