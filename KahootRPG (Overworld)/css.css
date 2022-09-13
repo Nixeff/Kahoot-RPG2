@@ -2,6 +2,7 @@
     border-style: solid;
     border-radius: 5px;
     border-color: black;
+    background-color: green;
 }
 #main{
     display:flex;
@@ -37,6 +38,7 @@
     width: 450px;
     height: 100px;
     font-size: large;
+    cursor: pointer;
 }
 .anwserbutton:hover{
     border-color: white;
