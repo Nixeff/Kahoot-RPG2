@@ -1,3 +1,5 @@
+
+
 // Används för att se villget allternativ som blev valt
 var opt_1 = false;
 var opt_2 = false;
@@ -30,8 +32,57 @@ var bg = new Image();
 bg.src = "png/Background.png";
 var think = new Image();
 think.src = "png/Think.png";
+
+
+wizardSprites = [];
 var playerImg = new Image();
 playerImg.src = "png/Wizard.png";
+wizardSprites.push(playerImg);
+var playerHitImg = new Image();
+playerHitImg.src = "png/Wizard-Hit.png";
+wizardSprites.push(playerHitImg);
+
+
+$(document).ready(function()
+    {
+		
+        $('#use').click(function()
+        {
+            //Define the data to be sent by the post method var data = {parameter name : value};
+           var data = {
+		uID : $('#uID').val(),
+		itemID : $('#itemID').val(),
+	};
+ 
+            $.ajax({
+                type: "post",
+                url: "inventoryChange.php",
+                data: data,
+                //If Ajax communication succeeds
+                success: function(data, dataType)
+                {
+                //Displaying the data returned from PHP
+                alert(data);
+				
+				//Reset the form content after submission.
+				if(data == "Transmission complete."){
+				document.forms[0].elements[0].value="";
+				document.forms[0].elements[1].value="";
+			    document.forms[0].elements[2].value="";
+				}
+                },
+               //Message when Ajax communication fails
+                error: function()
+                {
+                alert('Failed to use item');
+                }
+            });
+            return false;
+        });
+    });
+
+
+
 
 // Motståndare
 // obj img ImageClass
@@ -56,11 +107,11 @@ let BattleEnemy = class {
             }
         }
         context.drawImage(this.img[this.frame],0,0);
-        context.drawImage(playerImg,0,0);
 
         context.drawImage(think,0,0);
         wrapText(questions[q].Question, 440, 60, 400,40); 
         context.fillText(this.hp+" / "+this.maxHp, 100, 100);
+
         
     }
     //Motståndare förlorar liv och den byter fråga 
@@ -68,9 +119,7 @@ let BattleEnemy = class {
         this.hp -= 1;
         this.frame = 2;
         this.frameCount = 0;
-        if(this.hp <= 0){
-            inCombat = false;
-        }
+
         poAnwsers = [];
         q = Math.floor(Math.random() * questions.length);   //Slumpar en fråga
         for(let i = 0; i < anwsers.length; i++){
@@ -86,10 +135,55 @@ let BattleEnemy = class {
         document.getElementById("2").innerHTML = poAnwsers[1].Answer;
         document.getElementById("3").innerHTML = poAnwsers[2].Answer;
         document.getElementById("4").innerHTML = poAnwsers[3].Answer;
+
+        if(this.hp <= 0){
+            inCombat = false;
+            this.hp = this.maxHp;
+            document.getElementById("1").innerHTML = "Keep Moving";
+            document.getElementById("2").innerHTML = "Search";
+            document.getElementById("3").innerHTML = " ";
+            document.getElementById("4").innerHTML = " ";
+        }
     }
 }
 
+let Player = class {
+    constructor(hp,img) {
+        this.hp = hp;
+        this.maxHp = hp;
+        this.img = img;
+        this.hitFrame = 0;
+    }
 
+    draw(){
+        if(this.hitFrame>0){
+            context.drawImage(this.img[1],0,0);
+            this.hitFrame --;
+        } else {
+            context.drawImage(this.img[0],0,0);
+        }
+
+        context.fillText(this.hp+" / "+this.maxHp, 830, 100);
+    }
+    loseHp(lose){
+        this.hp -= lose;
+        this.hitFrame = 20;
+        if (this.hp <=0){
+            alert("You Died");
+        }
+    }
+    gainHp(gain){
+        if(this.hp+gain > this.maxHp){
+            this.hp += this.hp+gain-this.maxHp;
+        }else{
+            this.hp += gain;
+        }
+        
+    }
+
+}
+
+const player = new Player(5,wizardSprites);
 const dum = new BattleEnemy(enemy1, 5, 0);
 
 function wrapText(text, x, y, maxWidth, lineHeight) {
@@ -183,6 +277,7 @@ function update() {
                 dum.loseHP();
                 opt_1 = false;
             } else{
+                player.loseHp(1);
                 opt_1 = false;
             }
         }
@@ -191,6 +286,7 @@ function update() {
                 dum.loseHP();
                 opt_2 = false;
             } else{
+                player.loseHp(1);
                 opt_2 = false;
             }
         }
@@ -199,6 +295,7 @@ function update() {
                 dum.loseHP();
                 opt_3 = false;
             } else{
+                player.loseHp(1);
                 opt_3 = false;
             }
         }
@@ -207,8 +304,27 @@ function update() {
                 dum.loseHP();
                 opt_4 = false;
             } else{
+                player.loseHp(1);
                 opt_4 = false;
             }
+        }
+    } else if(!inCombat){
+        if(opt_1 == true ){
+            inCombat = true;
+            document.getElementById("1").innerHTML = poAnwsers[0].Answer;
+            document.getElementById("2").innerHTML = poAnwsers[1].Answer;
+            document.getElementById("3").innerHTML = poAnwsers[2].Answer;
+            document.getElementById("4").innerHTML = poAnwsers[3].Answer;
+            opt_1 = false;
+        }
+        if(opt_2 == true){
+            opt_2 = false;
+        }
+        if(opt_3 == true){
+            opt_3 = false;
+        }
+        if(opt_4 == true){
+            opt_4 = false;
         }
     }
 }
@@ -218,9 +334,13 @@ function draw(){
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(bg,0,0);
     context.font = "30px Arial";
+
     if(inCombat){
         dum.draw();
+    } else{
+
     }
+    player.draw();
     
 
     

@@ -9,6 +9,20 @@
 li{
     margin-left:25px;
 }
+#inventoryItem{
+    background-color:palevioletred;
+    border-style: groove;
+    border-radius: 5px;
+    border-color: purple;
+    margin: 15px;
+    width: 250px;
+}
+#logIn{
+    margin:10px;
+}
+#inventoryText{
+    margin:5px;
+}
 #questionList{
     background-color:palevioletred;
     border-style: groove;
