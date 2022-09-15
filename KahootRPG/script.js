@@ -42,11 +42,13 @@ wizardSprites.push(playerHitImg);
 
 $(document).ready(function()
     {
-        $('#use').click(function(){
+        $("input[type=button]").on("click",function(){
+        console.log("Kör");
+        $input = (this);
             //Define the data to be sent by the post method var data = {parameter name : value};
             var data = {
 		uID : $('#uID').val(),
-		itemID : $('#itemID').val(),
+		itemID : $input["id"],
         use : 1,
 	};
             $.ajax({
@@ -56,15 +58,23 @@ $(document).ready(function()
                 //If Ajax communication succeeds
                 success: function(data, dataType)
                 {
-                if(data == "1e"){
-                    let tal =parseInt(data.slice(0,-1));
-                    console.log(tal); 
-                    items[tal].use();
-                }else{
-                    let tal =parseInt(data);
-                    console.log(tal);
-                    items[tal].use();
-                }
+                    data = JSON.parse(data);
+                    if(data[2] != "e"){
+                        items[data[0]].use();
+                        try{   
+                            document.getElementById("amount"+data[0]).innerHTML = "x"+parseInt(data[1]-1);
+                        }catch(err){
+                            alert("ohh shit");
+                        }
+                    } else{
+                        try{
+                            document.getElementById(data[0]).remove();
+                        } catch{
+                            alert("ohh shit");
+                        }
+                    }
+
+                    
 
 				//Reset the form content after submission.
 				if(data == "Transmission complete."){
@@ -95,18 +105,72 @@ function addItem(id,uID){
         //If Ajax communication succeeds
         success: function(data, dataType)
         {
-        alert(data);
-        //Displaying the data returned from PHP
+            data = JSON.parse(data);
+
+            if(data[1] > 1){
+
+                var form = document.createElement("form");
+                form.setAttribute("id",data[0].toString());
+                form.setAttribute("class","inventoryItem");
+    
+                var element = document.getElementById("menu");
+                element.appendChild(form)
+    
+                var tag = document.createElement("input");
+                tag.setAttribute("type","hidden");
+                tag.setAttribute("id","uID");
+                tag.setAttribute("value",uID.toString());
+                
+                var element = document.getElementById(data[0].toString());
+                element.appendChild(tag);
+    
+                var tag = document.createElement("input");
+                tag.setAttribute("type","hidden");
+                tag.setAttribute("id","itemID");
+                tag.setAttribute("value",data[0].toString());
+                
+                element.appendChild(tag);
+                
+                var main = document.createElement("div");
+                main.setAttribute("id","main");
+                
+                element.appendChild(main);
+    
+                var tag = document.createElement("p");
+                tag.setAttribute("class","inventoryText");
+                tag.setAttribute("id","title"+data[0].toString());
+                var text = document.createTextNode(items[data[0]].name);
+                tag.appendChild(text);
+    
+                main.appendChild(tag);
+                var tag = document.createElement("p");
+                tag.setAttribute("class","inventoryText");
+                tag.setAttribute("id","amount"+data[0].toString());
+                var text = document.createTextNode(data[1].toString());
+                tag.appendChild(text);
+    
+                main.appendChild(tag);
+    
+                var tag = document.createElement("p");
+                tag.setAttribute("class","inventoryText");
+                tag.setAttribute("id","desc"+data[0].toString());
+                var text = document.createTextNode(items[data[0]].description);
+                tag.appendChild(text);
+    
+                element.appendChild(tag);
+    
+                var tag = document.createElement("input");
+                tag.setAttribute("type","button");
+                tag.setAttribute("id",data[0].toString());
+                tag.setAttribute("value","Use Item");
+                
+                element.appendChild(tag);
+            }
+
+
+            
+        }
         
-        //Reset the form content after submission.
-        if(data == "Transmission complete."){
-        }
-        },
-       //Message when Ajax communication fails
-        error: function()
-        {
-        alert('Failed to use item');
-        }
     });
     return false;
 }
@@ -182,17 +246,17 @@ let BattleEnemy = class {
         };
         shuffleArray(poAnwsers);
         //Sätter svaren på knapparna
-        document.getElementById("1").innerHTML = poAnwsers[0].Answer;
-        document.getElementById("2").innerHTML = poAnwsers[1].Answer;
-        document.getElementById("3").innerHTML = poAnwsers[2].Answer;
-        document.getElementById("4").innerHTML = poAnwsers[3].Answer;
+        document.getElementById("a1").innerHTML = poAnwsers[0].Answer;
+        document.getElementById("a2").innerHTML = poAnwsers[1].Answer;
+        document.getElementById("a3").innerHTML = poAnwsers[2].Answer;
+        document.getElementById("a4").innerHTML = poAnwsers[3].Answer;
         if(this.hp <= 0){
             inCombat = false;
             this.hp = this.maxHp;
-            document.getElementById("1").innerHTML = "Keep Moving";
-            document.getElementById("2").innerHTML = "Search";
-            document.getElementById("3").innerHTML = " ";
-            document.getElementById("4").innerHTML = " ";
+            document.getElementById("a1").innerHTML = "Keep Moving";
+            document.getElementById("a2").innerHTML = "Search";
+            document.getElementById("a3").innerHTML = " ";
+            document.getElementById("a4").innerHTML = " ";
         }
     }
 }
@@ -289,10 +353,10 @@ function init() {
             
                     
             //Sätter svaren på knapparna
-            document.getElementById("1").innerHTML = poAnwsers[0].Answer;
-            document.getElementById("2").innerHTML = poAnwsers[1].Answer;
-            document.getElementById("3").innerHTML = poAnwsers[2].Answer;
-            document.getElementById("4").innerHTML = poAnwsers[3].Answer;
+            document.getElementById("a1").innerHTML = poAnwsers[0].Answer;
+            document.getElementById("a2").innerHTML = poAnwsers[1].Answer;
+            document.getElementById("a3").innerHTML = poAnwsers[2].Answer;
+            document.getElementById("a4").innerHTML = poAnwsers[3].Answer;
                 
             gameloop();
         });
@@ -301,22 +365,23 @@ function init() {
 
 //Kollar vilken knapp som blev trycket
 function anwser(test) {
-    if(test.id == 1){
+    if(test.id == "a1"){
         opt_1 = true;
     } 
-    if(test.id == 2){
+    if(test.id == "a2"){
         opt_2 = true;
     } 
-    if(test.id == 3){
+    if(test.id == "a3"){
         opt_3 = true;
     } 
-    if(test.id == 4){
+    if(test.id == "a4"){
         opt_4 = true;
     } 
 }
 
 //Uppdaterar olika saker
 function update() {
+    
     if(inCombat){
         //Kollar om någon knapp blev trycked och ifall det är rätt eller inte
         if(opt_1 == true ){
@@ -358,10 +423,10 @@ function update() {
     } else if(!inCombat){
         if(opt_1 == true ){
             inCombat = true;
-            document.getElementById("1").innerHTML = poAnwsers[0].Answer;
-            document.getElementById("2").innerHTML = poAnwsers[1].Answer;
-            document.getElementById("3").innerHTML = poAnwsers[2].Answer;
-            document.getElementById("4").innerHTML = poAnwsers[3].Answer;
+            document.getElementById("a1").innerHTML = poAnwsers[0].Answer;
+            document.getElementById("a2").innerHTML = poAnwsers[1].Answer;
+            document.getElementById("a3").innerHTML = poAnwsers[2].Answer;
+            document.getElementById("a4").innerHTML = poAnwsers[3].Answer;
             opt_1 = false;
         }
         if(opt_2 == true){
@@ -373,6 +438,16 @@ function update() {
         }
         if(opt_4 == true){
             opt_4 = false;
+        }
+    }
+    for(i = 0; i<items.length;i++){
+        try{
+            if(document.getElementById("title"+i).innerHTML !== null){
+                document.getElementById("title"+i).innerHTML = items[i].name;
+                document.getElementById("desc"+i).innerHTML = items[i].description;
+            }
+        } catch(err){
+            alert(err);
         }
     }
 }

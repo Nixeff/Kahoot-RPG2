@@ -41,24 +41,31 @@ if(!empty($_POST["use"])){
   if ($item["Amount"] >= 2){
     $sql = "UPDATE inventory SET Amount = $amount-1 WHERE PlayerID = $uID AND itemID = $itemID";
     $conn->query($sql);
-    echo $itemID;
+    echo json_encode($data = [
+      $itemID, $item["Amount"], ""
+    ]);
   }
   if ($item["Amount"] == 1){
     $sql = "DELETE FROM inventory WHERE PlayerID = $uID AND itemID = $itemID";
     $conn->query($sql);
-    echo $itemID;
-    $empty = "e";
-    echo $empty;
+    echo json_encode($data = [
+      $itemID, $item["Amount"], "e" 
+    ]);
+    
   }
 }else{
   if(isset($item)){
-    echo "här";
     $sql = "UPDATE inventory SET Amount = $amount+1 WHERE PlayerID = $uID AND itemID = $itemID";
     $conn->query($sql);
+    echo json_encode($data = [
+      $itemID, $item["Amount"], ""
+    ]);
   } else{
-    echo "här med";
     $sql = "INSERT INTO inventory (PlayerID, itemID, Amount) VALUE ($uID, $itemID, 1)";
     $conn->query($sql);
+    echo json_encode($data = [
+      $itemID, $item["Amount"], ""
+    ]);
   }
 }
 

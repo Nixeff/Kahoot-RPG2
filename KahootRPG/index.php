@@ -42,7 +42,6 @@ if(!isset($_SESSION["loggedIn"]) || isset($_POST["loggedIn"])){
 if (!empty($_POST["uname"]) && !empty($_POST["pass"])){
     $uname = $_POST["uname"];
     $pass = $_POST["pass"];
-    echo "Här";
 
     // finns det ett username och är lösenordet rätt?
     $sql = "SELECT * FROM students WHERE Name = '$uname' AND Password = '$pass' ";
@@ -86,10 +85,10 @@ if (!empty($_POST["uname"]) && !empty($_POST["pass"])){
             <div id="anwserarea">
                 <?php
                 if($_SESSION["loggedIn"]){
-                    echo '<button class="anwserbutton" id="1" type="button" onclick="anwser(this);">1</button>
-                    <button class="anwserbutton" id="2" type="button" onclick="anwser(this);">2</button></br>
-                    <button class="anwserbutton" id="3" type="button" onclick="anwser(this);">3</button>
-                    <button class="anwserbutton" id="4" type="button" onclick="anwser(this);">4</button>';
+                    echo '<button class="anwserbutton" id="a1" type="button" onclick="anwser(this);">1</button>
+                    <button class="anwserbutton" id="a2" type="button" onclick="anwser(this);">2</button></br>
+                    <button class="anwserbutton" id="a3" type="button" onclick="anwser(this);">3</button>
+                    <button class="anwserbutton" id="a4" type="button" onclick="anwser(this);">4</button>';
                 }
                 
                 ?>
@@ -120,12 +119,12 @@ if (!empty($_POST["uname"]) && !empty($_POST["pass"])){
                             echo '<form id='.$inv[$i]["itemID"].' class="inventoryItem">
                             <input type="hidden" id="uID" name="uID" value="'.$uID.'"/>
                             <input type="hidden" id="itemID" name="itemID" value="'.$inv[$i]["itemID"].'"/>
-                            <p id="inventoryText"> Meat</p>
-                            <p id="inventoryText"> Heal 2 HP</p>
-                            <div id="main">
-                                <input id="use" type="button" value="Use Item"/>
-                                <input type="button" value="Discard"/>
+                            <div id="main"> 
+                                <p class="inventoryText" id="title'.$inv[$i]["itemID"].'"> Meat</p>
+                                <p class="inventoryText" id="amount'.$inv[$i]["itemID"].'">x'.$inv[$i]["Amount"].'</p>
                             </div>
+                            <p class="inventoryText" id="desc'.$inv[$i]["itemID"].'"> Heal 2 HP</p>
+                            <input id="'.$inv[$i]["itemID"].'" type="button" value="Use Item"/>
                             </form>';
                         }
                     }
