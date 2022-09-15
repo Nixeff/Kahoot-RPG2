@@ -16,13 +16,12 @@ if(isset($_SESSION['uID'])){
 
 function connCheck($conne, $sqll) {
     if ($conne->query($sqll) == TRUE) {
-      
-      $result = $conne->query($sqll);
-      return $result;
+        $result = $conne->query($sqll);
+        return $result;
     } else {
-      echo "Error: " . $sqll . "<br>" . $conne->error;
+        echo "Error: " . $sqll . "<br>" . $conne->error;
     }
-  }
+}
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -37,13 +36,13 @@ if(!isset($_SESSION["loggedIn"]) || isset($_POST["loggedIn"])){
     session_start();
     $_SESSION["loggedIn"] = false;
 }
-   
 
 
-if (isset($_POST["uname"]) && isset($_POST["pass"])){
+
+if (!empty($_POST["uname"]) && !empty($_POST["pass"])){
     $uname = $_POST["uname"];
     $pass = $_POST["pass"];
-
+    echo "Här";
 
     // finns det ett username och är lösenordet rätt?
     $sql = "SELECT * FROM students WHERE Name = '$uname' AND Password = '$pass' ";
@@ -53,7 +52,7 @@ if (isset($_POST["uname"]) && isset($_POST["pass"])){
     if ($result->num_rows > 0) {
         while($row = mysqli_fetch_assoc($result)){
             $_SESSION["uID"] = $row["ID"];
-        }}
+        }
         $_SESSION["loggedIn"] = true;
         $_SESSION['uname'] = $uname; 
     } else {
@@ -66,7 +65,7 @@ if (isset($_POST["uname"]) && isset($_POST["pass"])){
         } else {
             echo "<script>alert('We could not find your account you might have writen the wrong username or password try again')</script>" ;
         }
-}
+}}
 
 ?>
 <!DOCTYPE html>
@@ -118,25 +117,22 @@ if (isset($_POST["uname"]) && isset($_POST["pass"])){
                     }}
                     if(!empty($inv)){
                         for($i = 0; $i<count($inv); $i++){
-                            echo '<form id="inventoryItem">
+                            echo '<form id='.$inv[$i]["itemID"].' class="inventoryItem">
                             <input type="hidden" id="uID" name="uID" value="'.$uID.'"/>
                             <input type="hidden" id="itemID" name="itemID" value="'.$inv[$i]["itemID"].'"/>
                             <p id="inventoryText"> Meat</p>
                             <p id="inventoryText"> Heal 2 HP</p>
                             <div id="main">
-                                <input id="use" type="submit" value="Use Item"/>
-                                <input type="submit" value="Discard"/>
+                                <input id="use" type="button" value="Use Item"/>
+                                <input type="button" value="Discard"/>
                             </div>
                             </form>';
                         }
                     }
-
                 }
-
             }
             ?>
             
-
         </div>
     </div>
 </body >

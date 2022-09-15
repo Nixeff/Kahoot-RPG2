@@ -9,7 +9,7 @@
 li{
     margin-left:25px;
 }
-#inventoryItem{
+.inventoryItem{
     background-color:palevioletred;
     border-style: groove;
     border-radius: 5px;

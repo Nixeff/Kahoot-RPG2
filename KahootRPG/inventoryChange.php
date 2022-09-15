@@ -30,18 +30,34 @@ $sql = "SELECT * FROM inventory WHERE PlayerID = $uID AND itemID = $itemID";
 $result = connCheck($conn, $sql);
 if ($result->num_rows > 0) {
   while($row = mysqli_fetch_assoc($result)){
-    $item[] = $row;
+    
+    $item = $row;
+    $amount = $item["Amount"];
 }}
 
-$amount = $item[0]["Amount"];
+
 
 if(!empty($_POST["use"])){
-  if ($item[0]["Amount"] >= 2){
+  if ($item["Amount"] >= 2){
     $sql = "UPDATE inventory SET Amount = $amount-1 WHERE PlayerID = $uID AND itemID = $itemID";
     $conn->query($sql);
+    echo $itemID;
   }
-  if ($item[0]["Amount"] == 1){
+  if ($item["Amount"] == 1){
     $sql = "DELETE FROM inventory WHERE PlayerID = $uID AND itemID = $itemID";
+    $conn->query($sql);
+    echo $itemID;
+    $empty = "e";
+    echo $empty;
+  }
+}else{
+  if(isset($item)){
+    echo "här";
+    $sql = "UPDATE inventory SET Amount = $amount+1 WHERE PlayerID = $uID AND itemID = $itemID";
+    $conn->query($sql);
+  } else{
+    echo "här med";
+    $sql = "INSERT INTO inventory (PlayerID, itemID, Amount) VALUE ($uID, $itemID, 1)";
     $conn->query($sql);
   }
 }

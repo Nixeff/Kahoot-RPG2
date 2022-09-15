@@ -1,5 +1,3 @@
-
-
 // Används för att se villget allternativ som blev valt
 var opt_1 = false;
 var opt_2 = false;
@@ -44,15 +42,13 @@ wizardSprites.push(playerHitImg);
 
 $(document).ready(function()
     {
-		
         $('#use').click(function(){
             //Define the data to be sent by the post method var data = {parameter name : value};
-           var data = {
+            var data = {
 		uID : $('#uID').val(),
 		itemID : $('#itemID').val(),
         use : 1,
 	};
- 
             $.ajax({
                 type: "post",
                 url: "inventoryChange.php",
@@ -60,11 +56,19 @@ $(document).ready(function()
                 //If Ajax communication succeeds
                 success: function(data, dataType)
                 {
-                //Displaying the data returned from PHP
-                alert(data);
-				
+                if(data == "1e"){
+                    let tal =parseInt(data.slice(0,-1));
+                    console.log(tal); 
+                    items[tal].use();
+                }else{
+                    let tal =parseInt(data);
+                    console.log(tal);
+                    items[tal].use();
+                }
+
 				//Reset the form content after submission.
 				if(data == "Transmission complete."){
+                    
 				}
                 },
                //Message when Ajax communication fails
@@ -75,7 +79,64 @@ $(document).ready(function()
             });
             return false;
         });
+
+})
+function addItem(id,uID){
+
+    //Define the data to be sent by the post method var data = {parameter name : value};
+    var data = {
+        uID : uID,
+        itemID : id,
+    };
+    $.ajax({
+        type: "post",
+        url: "inventoryChange.php",
+        data: data,
+        //If Ajax communication succeeds
+        success: function(data, dataType)
+        {
+        alert(data);
+        //Displaying the data returned from PHP
+        
+        //Reset the form content after submission.
+        if(data == "Transmission complete."){
+        }
+        },
+       //Message when Ajax communication fails
+        error: function()
+        {
+        alert('Failed to use item');
+        }
     });
+    return false;
+}
+
+let Item = class {
+    constructor(name, description, effect, amount){
+        this.name = name;
+        this.description = description;
+        this.effect = effect;
+        this.amount = amount;
+    }
+    use(){
+        if(this.effect == 0){
+            player.gainHp(this.amount);
+        }
+        if(this.effect == 1){
+            dum.loseHP(this.amount);
+        }
+    }
+}
+
+let items = [];
+const food = new Item("Food", "404", 0, 100);
+items.push(food);
+const beef = new Item("Beef Jerky", "Eat to heal 1 HP", 0, 1);
+items.push(beef);
+const ration = new Item("Old Ration", "Eat to heal 2 HP", 0, 2);
+items.push(ration);
+const throwingKnife = new Item("Throwing Knife", "Throw to deal 2HP to the enemy", 1, 2);
+items.push(throwingKnife);
 
 
 
@@ -103,19 +164,15 @@ let BattleEnemy = class {
             }
         }
         context.drawImage(this.img[this.frame],0,0);
-
         context.drawImage(think,0,0);
         wrapText(questions[q].Question, 440, 60, 400,40); 
         context.fillText(this.hp+" / "+this.maxHp, 100, 100);
-
-        
     }
     //Motståndare förlorar liv och den byter fråga 
-    loseHP(){
-        this.hp -= 1;
+    loseHP(loss){
+        this.hp -= loss;
         this.frame = 2;
         this.frameCount = 0;
-
         poAnwsers = [];
         q = Math.floor(Math.random() * questions.length);   //Slumpar en fråga
         for(let i = 0; i < anwsers.length; i++){
@@ -123,15 +180,12 @@ let BattleEnemy = class {
                 poAnwsers.push(anwsers[i]);
             };
         };
-            
         shuffleArray(poAnwsers);
-        
         //Sätter svaren på knapparna
         document.getElementById("1").innerHTML = poAnwsers[0].Answer;
         document.getElementById("2").innerHTML = poAnwsers[1].Answer;
         document.getElementById("3").innerHTML = poAnwsers[2].Answer;
         document.getElementById("4").innerHTML = poAnwsers[3].Answer;
-
         if(this.hp <= 0){
             inCombat = false;
             this.hp = this.maxHp;
@@ -150,7 +204,6 @@ let Player = class {
         this.img = img;
         this.hitFrame = 0;
     }
-
     draw(){
         if(this.hitFrame>0){
             context.drawImage(this.img[1],0,0);
@@ -158,7 +211,6 @@ let Player = class {
         } else {
             context.drawImage(this.img[0],0,0);
         }
-
         context.fillText(this.hp+" / "+this.maxHp, 830, 100);
     }
     loseHp(lose){
@@ -171,12 +223,13 @@ let Player = class {
     gainHp(gain){
         if(this.hp+gain > this.maxHp){
             this.hp += this.hp+gain-this.maxHp;
+            if (this.hp>this.maxHp){
+                this.hp = this.maxHp;
+            }
         }else{
             this.hp += gain;
         }
-        
     }
-
 }
 
 const player = new Player(5,wizardSprites);
@@ -185,20 +238,18 @@ const dum = new BattleEnemy(enemy1, 5, 0);
 function wrapText(text, x, y, maxWidth, lineHeight) {
     var words = text.split(' ');
     var line = '';
-
     for(var n = 0; n < words.length; n++) {
-      var testLine = line + words[n] + ' ';
-      var metrics = context.measureText(testLine);
-      var testWidth = metrics.width;
-      if (testWidth > maxWidth && n > 0) {
+        var testLine = line + words[n] + ' ';
+        var metrics = context.measureText(testLine);
+        var testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0) {
         context.fillText(line, x, y);
         line = words[n] + ' ';
         y += lineHeight;
-      }
-      else {
-        line = testLine;
-      }
     }
+    else {
+        line = testLine;
+    }}
     context.fillText(line, x, y);
 }
 
@@ -270,7 +321,7 @@ function update() {
         //Kollar om någon knapp blev trycked och ifall det är rätt eller inte
         if(opt_1 == true ){
             if(poAnwsers[0].Correct == 1){
-                dum.loseHP();
+                dum.loseHP(1);
                 opt_1 = false;
             } else{
                 player.loseHp(1);
@@ -279,7 +330,7 @@ function update() {
         }
         if(opt_2 == true){
             if(poAnwsers[1].Correct == 1){
-                dum.loseHP();
+                dum.loseHP(1);
                 opt_2 = false;
             } else{
                 player.loseHp(1);
@@ -288,7 +339,7 @@ function update() {
         }
         if(opt_3 == true){
             if(poAnwsers[2].Correct == 1){
-                dum.loseHP();
+                dum.loseHP(1);
                 opt_3 = false;
             } else{
                 player.loseHp(1);
@@ -297,7 +348,7 @@ function update() {
         }
         if(opt_4 == true){
             if(poAnwsers[3].Correct == 1){
-                dum.loseHP();
+                dum.loseHP(1);
                 opt_4 = false;
             } else{
                 player.loseHp(1);
@@ -314,6 +365,7 @@ function update() {
             opt_1 = false;
         }
         if(opt_2 == true){
+            addItem(Math.floor(Math.random() * items.length),1);
             opt_2 = false;
         }
         if(opt_3 == true){
