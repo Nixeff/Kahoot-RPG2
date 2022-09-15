@@ -10,7 +10,19 @@ $data = [];
 if(isset($_SESSION['uname'])){
     $uname = $_SESSION['uname']; 
 }
+if(isset($_SESSION['uID'])){
+    $uID = $_SESSION['uID']; 
+}
 
+function connCheck($conne, $sqll) {
+    if ($conne->query($sqll) == TRUE) {
+      
+      $result = $conne->query($sqll);
+      return $result;
+    } else {
+      echo "Error: " . $sqll . "<br>" . $conne->error;
+    }
+  }
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -39,11 +51,14 @@ if (isset($_POST["uname"]) && isset($_POST["pass"])){
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
+        while($row = mysqli_fetch_assoc($result)){
+            $_SESSION["uID"] = $row["ID"];
+        }}
         $_SESSION["loggedIn"] = true;
         $_SESSION['uname'] = $uname; 
     } else {
     // finns det ett username och är lösenordet rätt?
-        $sql = "SELECT * FROM teacher WHERE Name = '$uname' AND Password = '$pass' ";
+        $sql = "SELECT * FROM teacher WHERE Name = '$uname' AND Password = '$pass'";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             header('Location: '.'frage.php');
@@ -52,7 +67,7 @@ if (isset($_POST["uname"]) && isset($_POST["pass"])){
             echo "<script>alert('We could not find your account you might have writen the wrong username or password try again')</script>" ;
         }
 }
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,7 +77,7 @@ if (isset($_POST["uname"]) && isset($_POST["pass"])){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>
+<script  src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"> </script>
 
 <link rel="stylesheet" href="css.css">
 <body>
@@ -88,20 +103,36 @@ if (isset($_POST["uname"]) && isset($_POST["pass"])){
                 echo '<form id="logIn" action="" method="POST"><p>Sign in!</p><input name="uname" placeholder="Username" autofocus/> </br><input name="pass" placeholder="Password" type="password"/> </br><input type="submit" value="Log in" /></form>';
             } else {
                 $uname = $_SESSION['uname']; 
+                $uID = $_SESSION['uID'];
                 echo '<p>Welcome '.$uname.'</p>';
                 echo '<form action="" method="POST">
                     <input type="hidden" name="loggedIn" value=false/>
                     <input type="submit" value="Log out"/>
                 </form>';
+                if($_SESSION["loggedIn"]){
+                    $sql = "SELECT * FROM inventory WHERE PlayerID = $uID";
+                    $result = connCheck($conn, $sql);
+                    if ($result->num_rows > 0) {
+                    while($row = mysqli_fetch_assoc($result)){
+                        $inv[] = $row;
+                    }}
+                    if(!empty($inv)){
+                        for($i = 0; $i<count($inv); $i++){
+                            echo '<form id="inventoryItem">
+                            <input type="hidden" id="uID" name="uID" value="'.$uID.'"/>
+                            <input type="hidden" id="itemID" name="itemID" value="'.$inv[$i]["itemID"].'"/>
+                            <p id="inventoryText"> Meat</p>
+                            <p id="inventoryText"> Heal 2 HP</p>
+                            <div id="main">
+                                <input id="use" type="submit" value="Use Item"/>
+                                <input type="submit" value="Discard"/>
+                            </div>
+                            </form>';
+                        }
+                    }
 
-                echo '<form id="inventoryItem">
-                <p id="inventoryText"> Meat</p>
-                <p id="inventoryText"> Heal 2 HP</p>
-                <div id="main">
-                    <input id="use" type="submit" value="Use Item"/>
-                    <input type="submit" value="Discard"/>
-                </div>
-                </form>';
+                }
+
             }
             ?>
             

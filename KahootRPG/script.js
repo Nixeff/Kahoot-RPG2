@@ -42,16 +42,15 @@ var playerHitImg = new Image();
 playerHitImg.src = "png/Wizard-Hit.png";
 wizardSprites.push(playerHitImg);
 
-
 $(document).ready(function()
     {
 		
-        $('#use').click(function()
-        {
+        $('#use').click(function(){
             //Define the data to be sent by the post method var data = {parameter name : value};
            var data = {
 		uID : $('#uID').val(),
 		itemID : $('#itemID').val(),
+        use : 1,
 	};
  
             $.ajax({
@@ -66,9 +65,6 @@ $(document).ready(function()
 				
 				//Reset the form content after submission.
 				if(data == "Transmission complete."){
-				document.forms[0].elements[0].value="";
-				document.forms[0].elements[1].value="";
-			    document.forms[0].elements[2].value="";
 				}
                 },
                //Message when Ajax communication fails
