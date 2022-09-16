@@ -37,7 +37,9 @@ if(!isset($_SESSION["loggedIn"]) || isset($_POST["loggedIn"])){
     $_SESSION["loggedIn"] = false;
 }
 
-
+//---------------------------------------------------------------------------------------------------------------
+//          LOGIN
+//---------------------------------------------------------------------------------------------------------------
 
 if (!empty($_POST["uname"]) && !empty($_POST["pass"])){
     $uname = $_POST["uname"];
@@ -96,12 +98,19 @@ if (!empty($_POST["uname"]) && !empty($_POST["pass"])){
         </div>
         <div id="menu">
             <?php 
+            //---------------------------------------------------------------------------------------------------------------
+            //                  SKAPA ELEMENT
+            //---------------------------------------------------------------------------------------------------------------
+            
+            //om du inte har loggat in skapar den inlogings grejen
             if(!$_SESSION["loggedIn"]){
                 
                 echo '<form id="logIn" action="" method="POST"><p>Sign in!</p><input name="uname" placeholder="Username" autofocus/> </br><input name="pass" placeholder="Password" type="password"/> </br><input type="submit" value="Log in" /></form>';
             } else {
+                //Har du loggat in så skapar den ditt inventory
                 $uname = $_SESSION['uname']; 
                 $uID = $_SESSION['uID'];
+                echo '<input id="jsUID" type="hidden" name="uID" value="'.$uID.'"';
                 echo '<p>Welcome '.$uname.'</p>';
                 echo '<form action="" method="POST">
                     <input type="hidden" name="loggedIn" value=false/>
@@ -116,6 +125,12 @@ if (!empty($_POST["uname"]) && !empty($_POST["pass"])){
                     }}
                     if(!empty($inv)){
                         for($i = 0; $i<count($inv); $i++){
+                            $button = " ";
+                            $iID = $inv[$i]["itemID"];
+                            if($inv[$i]["Amount"]>0){
+                                $button = '<input id="button'.$iID.'" type="button" value="Use Item" onclick="updateUseItem(this)"/>';
+                            }
+                            
                             echo '<form id='.$inv[$i]["itemID"].' class="inventoryItem">
                             <input type="hidden" id="uID" name="uID" value="'.$uID.'"/>
                             <input type="hidden" id="itemID" name="itemID" value="'.$inv[$i]["itemID"].'"/>
@@ -124,7 +139,7 @@ if (!empty($_POST["uname"]) && !empty($_POST["pass"])){
                                 <p class="inventoryText" id="amount'.$inv[$i]["itemID"].'">x'.$inv[$i]["Amount"].'</p>
                             </div>
                             <p class="inventoryText" id="desc'.$inv[$i]["itemID"].'"> Heal 2 HP</p>
-                            <input id="'.$inv[$i]["itemID"].'" type="button" value="Use Item"/>
+                            '.$button.'
                             </form>';
                         }
                     }

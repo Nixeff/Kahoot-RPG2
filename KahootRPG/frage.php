@@ -8,11 +8,11 @@ $dbname = "kahootrpg";
 $data = [];
 
 function connCheck($conne, $sqll) {
-  if ($conne->query($sqll) === TRUE) {
-    echo "New record created successfully";
-  } else {
-    echo "Error: " . $sqll . "<br>" . $conne->error;
-  }
+    if ($conne->query($sqll) === TRUE) {
+        echo "New record created successfully";
+    } else {
+        echo "Error: " . $sqll . "<br>" . $conne->error;
+    }
 }
 
 // Create connection
@@ -30,7 +30,7 @@ $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     while($row = mysqli_fetch_assoc($result)){
-      $questions[] = $row;
+        $questions[] = $row;
 }}
 
 $sql = "SELECT * FROM answers";
@@ -39,13 +39,8 @@ $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     while($row = mysqli_fetch_assoc($result)){
-      $anwsers[] = $row;
+        $anwsers[] = $row;
 }}
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +60,6 @@ if ($result->num_rows > 0) {
             <input name = "anwser2" placeholder = "Option 2"/> <input type="checkbox" name = "correct2"/>  </br>
             <input name = "anwser3" placeholder = "Option 3"/> <input type="checkbox" name = "correct3"/>  </br>
             <input name = "anwser4" placeholder = "Option 4"/> <input type="checkbox" name = "correct4"/>  </br>
-
             <input type="submit" value="Submit"/>
         </form>
         <div id="container">
@@ -79,11 +73,7 @@ if ($result->num_rows > 0) {
                 }
                 echo '<input type="hidden" name="RqID" value="'.$questions[$i]["qID"].'"/><input type="submit" value="Delete"/></form>';
             }
-            
-            
             ?>
-
-
         </div>
         <div>
             <button onclick="document.location='index.php'">Log out</button>

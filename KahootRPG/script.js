@@ -4,14 +4,21 @@ var opt_2 = false;
 var opt_3 = false;
 var opt_4 = false;
 
+// Håller koll på vilken fråga vi är på
 var q = 0;
 
+// Är vi i combat??
 var inCombat = true;
 
 let questions = [];     // Där vi sparar ner frågorna
 let anwsers = [];       // Där vi sparar ner potentiella svar
 let poAnwsers = [];     // Används för att slumpa ut vart svaren ska vara
 
+//--------------------------------------------------------------------------
+//                   BILDER
+//-------------------------------------------------------------------------- 
+
+// För att spara Sprites till motståndaren
 var enemy1 = [];
 
 var enemy1F1 = new Image();
@@ -40,15 +47,19 @@ var playerHitImg = new Image();
 playerHitImg.src = "png/Wizard-Hit.png";
 wizardSprites.push(playerHitImg);
 
-$(document).ready(function()
-    {
-        $("input[type=button]").on("click",function(){
-        console.log("Kör");
-        $input = (this);
+//----------------------------------------------------------
+//              AJAX
+//----------------------------------------------------------
+
+
+//Alla input type button activerar denna funktion som sickar iväg att man använder ett item till databas
+function updateUseItem(thisThing){
+        $input = thisThing;
+        console.log($input);
             //Define the data to be sent by the post method var data = {parameter name : value};
             var data = {
 		uID : $('#uID').val(),
-		itemID : $input["id"],
+		itemID : $input["id"].slice(6),
         use : 1,
 	};
             $.ajax({
@@ -58,28 +69,21 @@ $(document).ready(function()
                 //If Ajax communication succeeds
                 success: function(data, dataType)
                 {
+                    //Sickar data via JSON
                     data = JSON.parse(data);
-                    if(data[2] != "e"){
+                    //Är den inte tom ändra amount
+                    if(data[1]>=1){
                         items[data[0]].use();
                         try{   
                             document.getElementById("amount"+data[0]).innerHTML = "x"+parseInt(data[1]-1);
                         }catch(err){
                             alert("ohh shit");
                         }
-                    } else{
-                        try{
-                            document.getElementById(data[0]).remove();
-                        } catch{
-                            alert("ohh shit");
-                        }
+                    // är den tom? ta bort den
                     }
-
-                    
-
-				//Reset the form content after submission.
-				if(data == "Transmission complete."){
-                    
-				}
+                    if(data[1]-1 == 0){
+                        document.getElementById("button"+data[0]).remove();
+                    }
                 },
                //Message when Ajax communication fails
                 error: function()
@@ -88,9 +92,8 @@ $(document).ready(function()
                 }
             });
             return false;
-        });
+}
 
-})
 function addItem(id,uID){
 
     //Define the data to be sent by the post method var data = {parameter name : value};
@@ -106,75 +109,40 @@ function addItem(id,uID){
         success: function(data, dataType)
         {
             data = JSON.parse(data);
-
-            if(data[1] > 1){
-
-                var form = document.createElement("form");
-                form.setAttribute("id",data[0].toString());
-                form.setAttribute("class","inventoryItem");
-    
-                var element = document.getElementById("menu");
-                element.appendChild(form)
-    
+            //Är det en ny element som behöver skapas?
+            console.log(data[1]);
+                //Ändra amount
+            try{   
+                let am = parseInt(data[1])+1;
+                document.getElementById("amount"+data[0].toString()).innerHTML = "x"+am.toString();
+            }catch(err){
+                alert("ohh shit");
+            }
+            if(data[1]+1 == 1){
                 var tag = document.createElement("input");
-                tag.setAttribute("type","hidden");
-                tag.setAttribute("id","uID");
-                tag.setAttribute("value",uID.toString());
-                
+                tag.setAttribute("id","button"+data[0].toString());
+                tag.setAttribute("type","button");
+                tag.setAttribute("value","Use Item");
+                tag.setAttribute("onclick","updateUseItem(this)");
                 var element = document.getElementById(data[0].toString());
                 element.appendChild(tag);
-    
-                var tag = document.createElement("input");
-                tag.setAttribute("type","hidden");
-                tag.setAttribute("id","itemID");
-                tag.setAttribute("value",data[0].toString());
-                
-                element.appendChild(tag);
-                
-                var main = document.createElement("div");
-                main.setAttribute("id","main");
-                
-                element.appendChild(main);
-    
-                var tag = document.createElement("p");
-                tag.setAttribute("class","inventoryText");
-                tag.setAttribute("id","title"+data[0].toString());
-                var text = document.createTextNode(items[data[0]].name);
-                tag.appendChild(text);
-    
-                main.appendChild(tag);
-                var tag = document.createElement("p");
-                tag.setAttribute("class","inventoryText");
-                tag.setAttribute("id","amount"+data[0].toString());
-                var text = document.createTextNode(data[1].toString());
-                tag.appendChild(text);
-    
-                main.appendChild(tag);
-    
-                var tag = document.createElement("p");
-                tag.setAttribute("class","inventoryText");
-                tag.setAttribute("id","desc"+data[0].toString());
-                var text = document.createTextNode(items[data[0]].description);
-                tag.appendChild(text);
-    
-                element.appendChild(tag);
-    
-                var tag = document.createElement("input");
-                tag.setAttribute("type","button");
-                tag.setAttribute("id",data[0].toString());
-                tag.setAttribute("value","Use Item");
-                
-                element.appendChild(tag);
             }
-
-
-            
         }
-        
     });
     return false;
 }
 
+//------------------------------------------------------------------------------------
+//                          CLASSER
+//--------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------
+//              ITEM
+// name str             (är namnet på saken)
+// description str      (en beskriving på saken så som "Eat for 2HP")
+// effect int           (0 = heal 1 = damage)
+// amount int           (hur mycket damage eller heal)
+//---------------------------------------------------------------------------------------
 let Item = class {
     constructor(name, description, effect, amount){
         this.name = name;
@@ -192,8 +160,9 @@ let Item = class {
     }
 }
 
+// Lägger alla items i en lista för att gära det enklare att hantera
 let items = [];
-const food = new Item("Food", "404", 0, 100);
+const food = new Item("Pebble", "Throw to del 1HP to the enemy", 1, 1);
 items.push(food);
 const beef = new Item("Beef Jerky", "Eat to heal 1 HP", 0, 1);
 items.push(beef);
@@ -204,11 +173,11 @@ items.push(throwingKnife);
 
 
 
-
-// Motståndare
-// obj img ImageClass
-// var hp int
-//  
+//-----------------------------------------------------------------------------------
+//                  MOTSÅNDARE
+// li img ImageClass       (lista på bilder som ska användas 0,1 = idle 2 = hurt)
+// var hp int              (hur mycket hälsa har motståndaren)
+//------------------------------------------------------------------------------------
 let BattleEnemy = class {
     constructor(img, hp){
         this.img = img;
@@ -260,7 +229,11 @@ let BattleEnemy = class {
         }
     }
 }
-
+//-----------------------------------------------------------------------------------------
+//                      PLAYER
+// var hp int       (hur mycket hälsa har spelaren)
+// li img obj       (lista på bilder för spelaren ska använda 0 = idle 1 = skadad)
+//..........................................................................................
 let Player = class {
     constructor(hp,img) {
         this.hp = hp;
@@ -299,6 +272,19 @@ let Player = class {
 const player = new Player(5,wizardSprites);
 const dum = new BattleEnemy(enemy1, 5, 0);
 
+//---------------------------------------------------------------------------------------------------------------
+//              FUNCTIONS
+//---------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------
+//              WRAPTEXT
+//var text str          (lägg in texten du vill ska dela up sig sjålv)
+//var x int             (vilken x coordinat ska den skrivas)
+//var y int             (vilken y coordinat ska den skrivas)
+//var maxWidth int      (Max längden på textsten. så den vet hur bred den får vara innan den bryter i texten)
+//var lineHeight int    (Hur många pixlar emmellan rader ska det vara)
+//---------------------------------------------------------------------------------------------------------------
+
 function wrapText(text, x, y, maxWidth, lineHeight) {
     var words = text.split(' ');
     var line = '';
@@ -317,17 +303,21 @@ function wrapText(text, x, y, maxWidth, lineHeight) {
     context.fillText(line, x, y);
 }
 
-
-
+//---------------------------------------------------------------------------------------------------------------
+//              SHUFFLEARRAY
+//var array li      (listan som du ska blanda)
 //Blandar listan credit: ashleedawg Stackoverflow
+//---------------------------------------------------------------------------------------------------------------
+
 function shuffleArray(array) {
     for (let i = array.length-1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
-// Startar helaprogrammet
+//---------------------------------------------------------------------------------------------------------------
+//              INIT
+//---------------------------------------------------------------------------------------------------------------
 function init() {
     //Fångar in frågorna
     fetch('getQue.php').then(function(response) {
@@ -363,6 +353,9 @@ function init() {
     })
 };    
 
+//---------------------------------------------------------------------------------------------------------------
+//              ANWSER
+//---------------------------------------------------------------------------------------------------------------
 //Kollar vilken knapp som blev trycket
 function anwser(test) {
     if(test.id == "a1"){
@@ -379,9 +372,13 @@ function anwser(test) {
     } 
 }
 
+//----------------------------------------------------------------
+//              UPDATE
+//----------------------------------------------------------------
+
 //Uppdaterar olika saker
 function update() {
-    
+    //Kollar om vi slås
     if(inCombat){
         //Kollar om någon knapp blev trycked och ifall det är rätt eller inte
         if(opt_1 == true ){
@@ -420,7 +417,9 @@ function update() {
                 opt_4 = false;
             }
         }
+    //om vi inte slås
     } else if(!inCombat){
+        // Gå vidare och slås mot något annat
         if(opt_1 == true ){
             inCombat = true;
             document.getElementById("a1").innerHTML = poAnwsers[0].Answer;
@@ -429,8 +428,26 @@ function update() {
             document.getElementById("a4").innerHTML = poAnwsers[3].Answer;
             opt_1 = false;
         }
+        // hitta ett item och sedan gå vidare
         if(opt_2 == true){
-            addItem(Math.floor(Math.random() * items.length),1);
+            let it = Math.floor(Math.random() * items.length);
+            try{
+                addItem(it,document.getElementById("jsUID").value);
+            } catch(e){
+
+            }
+            
+            var tag = document.createElement("p");
+            var text = document.createTextNode("You found a "+items[it].name);
+            tag.appendChild(text);
+            var element = document.getElementById("canvas");
+            element.appendChild(tag);
+
+            inCombat = true;
+            document.getElementById("a1").innerHTML = poAnwsers[0].Answer;
+            document.getElementById("a2").innerHTML = poAnwsers[1].Answer;
+            document.getElementById("a3").innerHTML = poAnwsers[2].Answer;
+            document.getElementById("a4").innerHTML = poAnwsers[3].Answer;
             opt_2 = false;
         }
         if(opt_3 == true){
@@ -446,30 +463,30 @@ function update() {
                 document.getElementById("title"+i).innerHTML = items[i].name;
                 document.getElementById("desc"+i).innerHTML = items[i].description;
             }
-        } catch(err){
-            alert(err);
+        } catch(e){
+            
         }
     }
 }
 
-// Mållar saker
+//---------------------------------------------------------------------------------------------------------------
+//              DRAW 
+//---------------------------------------------------------------------------------------------------------------
+
 function draw(){
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(bg,0,0);
     context.font = "30px Arial";
-
     if(inCombat){
         dum.draw();
-    } else{
-
     }
     player.draw();
-    
-
-    
 }
 
-// Loop
+//---------------------------------------------------------------------------------------------------------------
+//          GAMELOOP
+//---------------------------------------------------------------------------------------------------------------
+
 function gameloop() {
     draw();
     //checkmouse();

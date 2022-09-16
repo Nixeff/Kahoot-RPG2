@@ -6,6 +6,7 @@ $dbname = "kahootrpg";
 
 $uID = $_POST["uID"];
 $itemID = $_POST["itemID"];
+$itemID = (int)$itemID;
 
 
 function connCheck($conne, $sqll) {
@@ -25,7 +26,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
+//Letar efter itemet och lägger det i $item för att användas när man lägger in det i databasen
 $sql = "SELECT * FROM inventory WHERE PlayerID = $uID AND itemID = $itemID";
 $result = connCheck($conn, $sql);
 if ($result->num_rows > 0) {
@@ -38,34 +39,16 @@ if ($result->num_rows > 0) {
 
 
 if(!empty($_POST["use"])){
-  if ($item["Amount"] >= 2){
     $sql = "UPDATE inventory SET Amount = $amount-1 WHERE PlayerID = $uID AND itemID = $itemID";
     $conn->query($sql);
     echo json_encode($data = [
-      $itemID, $item["Amount"], ""
+      $itemID, $amount
     ]);
-  }
-  if ($item["Amount"] == 1){
-    $sql = "DELETE FROM inventory WHERE PlayerID = $uID AND itemID = $itemID";
-    $conn->query($sql);
-    echo json_encode($data = [
-      $itemID, $item["Amount"], "e" 
-    ]);
-    
-  }
 }else{
-  if(isset($item)){
     $sql = "UPDATE inventory SET Amount = $amount+1 WHERE PlayerID = $uID AND itemID = $itemID";
     $conn->query($sql);
     echo json_encode($data = [
-      $itemID, $item["Amount"], ""
+      $itemID, $amount
     ]);
-  } else{
-    $sql = "INSERT INTO inventory (PlayerID, itemID, Amount) VALUE ($uID, $itemID, 1)";
-    $conn->query($sql);
-    echo json_encode($data = [
-      $itemID, $item["Amount"], ""
-    ]);
-  }
 }
 
